@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from '../firebase';
 
 function SignIn() {
@@ -27,7 +27,9 @@ function SignIn() {
         setError(null);
         try {
             if (isSignUp) {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await sendEmailVerification(userCredential.user);
+                alert("Account created! A verification email has been sent to " + email);
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
             }
